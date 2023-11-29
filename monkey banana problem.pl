@@ -1,21 +1,26 @@
+on(floor,monkey).
+on(floor,chair).
+in(room,monkey).
+in(room,chair).
+in(room,banana).
+at(ceiling,banana).
 
-state(on_floor, at(monkey, middle), at(banana, ceiling), not_at(chair, middle)).
+strong(monkey).
+grasp(monkey).
+climb(monkey,chair).
 
-action(grab, state(on_floor, at(monkey, Position), at(monkey, Position), at(chair, Position)), state(on_chair, at(monkey, Position), at(monkey, Position), at(chair, Position))).
-action(climb, state(on_floor, at(monkey, Position), at(monkey, Position), at(chair, Position)), state(on_chair, at(monkey, Position), at(monkey, Position), at(chair, Position))).
-action(push(Position), state(on_floor, at(monkey, Position), at(banana, ceiling), not_at(chair, Position)), state(on_floor, at(monkey, Position), at(banana, ceiling), at(chair, Position))).
+push(monkey,chair):-
+    strong(monkey).
+
+under(banana,chair):-
+    push(monkey,chair).
 
 
-perform(Action, State, NewState) :-
-    call(Action, Action, State, NewState).
+canreach(banana,monkey):-
+    at(floor,banana);
+    at(ceiling,banana),
+    under(banana,chair),
+    climb(monkey,chair).
 
-goal_state(state(_, at(monkey, _), at(banana, _), _)).
-
-plan(State, Plan) :-
-    goal_state(State),
-    Plan = [].
-
-plan(State, [Action | RestOfPlan]) :-
-    action(Action, State, NewState),
-    plan(NewState, RestOfPlan).
-
+canget(banana,monkey):-
+    canreach(banana,monkey),grasp(monkey).
